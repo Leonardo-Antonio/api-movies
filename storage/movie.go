@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"github.com/Leonardo-Antonio/api-movies/helpers"
 	"github.com/Leonardo-Antonio/api-movies/models"
 	"gorm.io/gorm"
@@ -120,14 +121,10 @@ func (m *Movie) GetByCategories(ID int) (movies []models.Movies, err error) {
 
 func (m *Movie) GetByStars(stars int) (movies []models.Movies, err error) {
 	if stars > 5 || stars < 0 {
+		fmt.Print(stars)
 		return movies, helpers.ErrStars
 	}
-
-	err = m.db.Model(&models.Movies{}).Select(
-		"movies.id, movies.name, movies.stars, movies.state, categories.category",
-	).Joins("left join categories on movies.categories_id = categories.id").
-		Where("movies.stars = ?", stars).
-		Scan(&movies).Error
+	err = m.db.Preload(clause.Associations).Find(&movies, "stars = ?", stars).Error
 	if err != nil {
 		return
 	}
