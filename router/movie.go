@@ -11,7 +11,7 @@ func Movie(movie storage.IMovie, e *echo.Echo) {
 	group := e.Group("/api/v1/movies")
 	group.POST("", hand.Create)
 	group.PUT("", hand.Update)
-	group.DELETE("", hand.Delete)
+	group.DELETE("/:ID", hand.Delete)
 	group.GET("/all", hand.GetAll)
 	group.GET("/by/categories/:ID", hand.GetByCategories)
 	group.GET("/by/stars/:stars", hand.GetByStars)
