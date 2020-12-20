@@ -1,10 +1,10 @@
 package storage
 
 import (
-	"fmt"
 	"github.com/Leonardo-Antonio/api-movies/helpers"
 	"github.com/Leonardo-Antonio/api-movies/models"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type (
@@ -74,33 +74,9 @@ func (m *Movie) Delete(movie *models.Movies) (err error) {
 }
 
 func (m *Movie) GetAll() (movies []models.Movies, err error) {
-	rows, err := m.db.Model(&models.Movies{}).
-		Select("authors.id, authors.created_at, " +
-			"authors.updated_at, authors.deleted_at, " +
-			"authors.name, authors.last_name, " +
-			"authors.country, authors.movies_id, " +
-			"movies.id, movies.created_at, " +
-			"movies.updated_at, movies.deleted_at, " +
-			"movies.name, movies.stars, movies.state, movies.categories_id").
-		Joins("left join authors on movies.id = authors.movies_id").
-		Rows()
-	defer rows.Close()
+	err = m.db.Preload(clause.Associations).Find(&movies).Error
 	if err != nil {
 		return
-	}
-
-	for rows.Next() {
-		var movie models.Movies
-		err := rows.Scan(
-			&movie.Actors[0].ID, &movie.Actors[0].CreatedAt, &movie.Actors[0].UpdatedAt, &movie.Actors[0].DeletedAt,
-			&movie.Actors[0].Name, &movie.Actors[0].LastName, &movie.Actors[0].Country, &movie.Actors[0].MoviesID,
-			&movie.ID, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt,
-			&movie.Name, &movie.Stars, &movie.State, &movie.CategoriesID,
-		)
-		if err != nil {
-			return []models.Movies{}, err
-		}
-		fmt.Println(movie)
 	}
 	return
 }
