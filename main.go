@@ -26,7 +26,7 @@ func main() {
 	e := echo.New()
 	router.Movie(movieStorage, e)
 	router.Author(authorStorage, e)
-	e.Logger.Fatal(e.Start(":8080"))
+	e.Logger.Fatal(e.Start(":9000"))
 
 }
 
@@ -34,51 +34,50 @@ func main() {
 //m := storage.NewMovie(db)
 //a := storage.NewAuthor(db)
 //
-//err = c.Create(&models.Categories{
+//err = categoryStorage.Create(&models.Categories{
 //Category: "Terror",
 //})
-//err = c.Create(&models.Categories{
+//err = categoryStorage.Create(&models.Categories{
 //Category: "Comedy",
 //})
-//err = c.Create(&models.Categories{
+//err = categoryStorage.Create(&models.Categories{
 //Category: "Acción",
 //})
 //
-//err = m.Create(&models.Movies{
+//err = movieStorage.Create(&models.Movies{
 //Name: "Saw I",
 //Stars: 5,
 //CategoriesID: 1,
 //})
-//err = m.Create(&models.Movies{
+//err = movieStorage.Create(&models.Movies{
 //Name: "Saw II",
 //Stars: 4,
 //CategoriesID: 1,
 //})
-//err = m.Create(&models.Movies{
+//err = movieStorage.Create(&models.Movies{
 //Name: "Saw III",
 //Stars: 5,
 //CategoriesID: 1,
 //})
-//
-//err = a.Create(models.Authors{
+//err = authorStorage.Create(models.Authors{
 //Name: "Leonardo",
 //LastName: "Nolasco",
 //Country: "Perú",
 //MoviesID: 1,
 //})
-//err = a.Create(models.Authors{
+//err = authorStorage.Create(models.Authors{
 //Name: "Alexandra",
 //LastName: "Navarro",
 //Country: "Perú",
 //MoviesID: 1,
 //})
-//err = a.Create(models.Authors{
+//err = authorStorage.Create(models.Authors{
 //Name: "Antonio",
 //LastName: "Leyva",
 //Country: "Perú",
 //MoviesID: 2,
 //})
-//err = a.Create(models.Authors{
+//err = authorStorage.Create(models.Authors{
 //Name: "Jaqueline",
 //LastName: "Navarro",
 //Country: "Perú",
