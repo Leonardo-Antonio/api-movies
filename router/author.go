@@ -10,4 +10,7 @@ func Author(storage storage.IAuthor, e *echo.Echo) {
 	hand := handler.NewAuthor(storage)
 	group := e.Group("/api/v1/authors")
 	group.GET("/:ID", hand.GetByMovie)
+	group.POST("", hand.Create)
+	group.DELETE("/:ID", hand.Delete)
+	group.PUT("", hand.Update)
 }

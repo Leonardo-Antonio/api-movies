@@ -13,7 +13,7 @@ type (
 	IAuthor interface {
 		Create(actor models.Authors) (err error)
 		Update(actor models.Authors) (err error)
-		Delete(actor models.Authors) (err error)
+		Delete(ID uint) (err error)
 		GetByMovie(ID int) (movies models.Movies, err error)
 	}
 )
@@ -63,20 +63,20 @@ func (a *Author) Update(actor models.Authors) (err error) {
 	return
 }
 
-func (a *Author) Delete(actor models.Authors) (err error) {
-	if actor.ID == 0 {
+func (a *Author) Delete(ID uint) (err error) {
+	if ID == 0 {
 		return helpers.ErrIDInvalid
 	}
-	err = a.db.Delete(&actor).Error
+	err = a.db.Delete(&models.Authors{}, ID).Error
 	if err != nil {
 		return
 	}
 	return nil
 }
 
-func (a *Author) GetByMovie(ID int) (movies models.Movies, err error) {
+func (a *Author) GetByMovie(ID int) (movie models.Movies, err error) {
 	if ID == 0 {
-		return movies, helpers.ErrIDInvalid
+		return movie, helpers.ErrIDInvalid
 	}
 	rows, err := a.db.Model(&models.Movies{}).
 		Select("authors.id, authors.created_at, "+
@@ -95,7 +95,6 @@ func (a *Author) GetByMovie(ID int) (movies models.Movies, err error) {
 
 	for rows.Next() {
 		var authors models.Authors
-		var movie models.Movies
 		err := rows.Scan(
 			&authors.ID, &authors.CreatedAt, &authors.UpdatedAt, &authors.DeletedAt,
 			&authors.Name, &authors.LastName, &authors.Country, &authors.MoviesID,
@@ -105,15 +104,10 @@ func (a *Author) GetByMovie(ID int) (movies models.Movies, err error) {
 		if err != nil {
 			return models.Movies{}, err
 		}
-		movies.Actors = append(movies.Actors, authors)
-		movies.ID = movie.ID
-		movies.CreatedAt = movie.CreatedAt
-		movies.UpdatedAt = movie.UpdatedAt
-		movies.DeletedAt = movie.DeletedAt
-		movies.Name = movie.Name
-		movies.State = movie.State
-		movies.Stars = movie.Stars
-		movies.CategoriesID = movie.CategoriesID
+		movie.Actors = append(movie.Actors, authors)
+	}
+	if movie.ID == 0 {
+		return movie, helpers.ErrMovieNotExist
 	}
 	return
 }
