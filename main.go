@@ -6,6 +6,7 @@ import (
 	"github.com/Leonardo-Antonio/api-movies/router"
 	"github.com/Leonardo-Antonio/api-movies/storage"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"log"
 )
 
@@ -22,10 +23,13 @@ func main() {
 
 	movieStorage := storage.NewMovie(db)
 	authorStorage := storage.NewAuthor(db)
+	categoryStorage := storage.NewCategory(db)
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 	router.Movie(movieStorage, e)
 	router.Author(authorStorage, e)
+	router.Category(categoryStorage, e)
 	e.Logger.Fatal(e.Start(":8080"))
 
 }
