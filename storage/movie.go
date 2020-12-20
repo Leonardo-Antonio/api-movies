@@ -14,7 +14,7 @@ type (
 	IMovie interface {
 		Create(movie *models.Movies) error
 		Update(movie models.Movies) (err error)
-		Delete(movie *models.Movies) (err error)
+		Delete(ID int) (err error)
 		GetAll() (movies []models.Movies, err error)
 		GetByCategories(IDCategory int) (movies []models.Movies, err error)
 		GetByStars(stars int) (movies []models.Movies, err error)
@@ -62,11 +62,11 @@ func (m *Movie) Update(movie models.Movies) (err error) {
 	return
 }
 
-func (m *Movie) Delete(movie *models.Movies) (err error) {
-	if movie.ID == 0 {
+func (m *Movie) Delete(ID int) (err error) {
+	if ID == 0 {
 		return helpers.ErrIDInvalid
 	}
-	err = m.db.Delete(movie).Error
+	err = m.db.Delete(&models.Movies{}, ID).Error
 	if err != nil {
 		return
 	}
