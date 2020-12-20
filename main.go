@@ -26,7 +26,7 @@ func main() {
 	e := echo.New()
 	router.Movie(movieStorage, e)
 	router.Author(authorStorage, e)
-	e.Logger.Fatal(e.Start(":9000"))
+	e.Logger.Fatal(e.Start(":8080"))
 
 }
 
