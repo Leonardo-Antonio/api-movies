@@ -14,7 +14,7 @@ type (
 		Create(category *models.Categories) error
 		GetAll() (categories []models.Categories, err error)
 		Update(categories models.Categories) error
-		Delete(categories *models.Categories) error
+		Delete(ID int) error
 	}
 )
 
@@ -58,16 +58,14 @@ func (c *Category) Update(categories models.Categories) error {
 	return nil
 }
 
-func (c *Category) Delete(categories *models.Categories) error {
-	if categories.ID == 0 {
+func (c *Category) Delete(ID int) error {
+	if ID == 0 {
 		return helpers.ErrIDInvalid
 	}
-	if categories.Category == "" {
-		return helpers.ErrNull("categories")
-	}
-	err := c.db.Delete(categories).Error
+	err := c.db.Delete(&models.Categories{}, ID).Error
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
