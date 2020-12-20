@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"fmt"
 	"github.com/Leonardo-Antonio/api-movies/helpers"
 	"github.com/Leonardo-Antonio/api-movies/models"
 	"gorm.io/gorm"
@@ -83,45 +82,15 @@ func (m *Movie) GetAll() (movies []models.Movies, err error) {
 }
 
 func (m *Movie) GetByCategories(ID int) (movies []models.Movies, err error) {
-	rows, err := m.db.Model(&models.Authors{}).
-		Select("*").
-		Joins(""+
-			"LEFT JOIN movies "+
-			"ON ( authors.movies_id = movies.id )").
-		Where("movies.categories_id = ?", ID).Rows()
-
-	defer rows.Close()
+	err = m.db.Preload(clause.Associations).Find(&movies, "categories_id = ?", ID).Error
 	if err != nil {
 		return
-	}
-
-	for rows.Next() {
-		var authors models.Authors
-		var movie models.Movies
-		err := rows.Scan(
-			&authors.ID, &authors.CreatedAt, &authors.UpdatedAt, &authors.DeletedAt,
-			&authors.Name, &authors.LastName, &authors.Country, &authors.MoviesID,
-			&movie.ID, &movie.CreatedAt, &movie.UpdatedAt, &movie.DeletedAt,
-			&movie.Name, &movie.Stars, &movie.State, &movie.CategoriesID,
-		)
-		if err != nil {
-			return []models.Movies{}, err
-		}
-		movie.Actors = append(movie.Actors, authors)
-		if len(movies) != 0 {
-			for i := 0; i < len(movies); i++ {
-				movies = append(movies, movie)
-			}
-		} else {
-			movies = append(movies, movie)
-		}
 	}
 	return
 }
 
 func (m *Movie) GetByStars(stars int) (movies []models.Movies, err error) {
 	if stars > 5 || stars < 0 {
-		fmt.Print(stars)
 		return movies, helpers.ErrStars
 	}
 	err = m.db.Preload(clause.Associations).Find(&movies, "stars = ?", stars).Error
