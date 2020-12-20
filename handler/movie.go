@@ -84,29 +84,19 @@ func (m *Movie) Update(c echo.Context) error {
 }
 
 func (m *Movie) Delete(c echo.Context) error {
-	var model models.Movies
-	err := c.Bind(&model)
+	ID, err := strconv.Atoi(c.Param("ID"))
 	if err != nil {
-		response := helpers.ResponseJSON(helpers.ERROR, "the structure is invalid", true, nil)
-		return c.JSON(http.StatusBadRequest, response)
+		response := helpers.ResponseJSON(helpers.ERROR, "parameter must be number", true, nil)
+		return c.JSON(http.StatusInternalServerError, response)
 	}
 
-	err = m.storage.Delete(&model)
+	err = m.storage.Delete(ID)
 	if err != nil {
 		if errors.Is(err, helpers.ErrIDInvalid) {
 			response := helpers.ResponseJSON(helpers.ERROR, err.Error(), true, nil)
 			return c.JSON(http.StatusBadRequest, response)
-		}
-		e, ok := err.(*mysql.MySQLError)
-		if !ok {
-			response := helpers.ResponseJSON(helpers.ERROR, err.Error(), true, nil)
-			return c.JSON(http.StatusInternalServerError, response)
-		}
-		if e.Number == 1062 || e.Number == 1452 {
-			response := helpers.ResponseJSON(helpers.ERROR, e.Error(), true, nil)
-			return c.JSON(http.StatusBadRequest, response)
 		} else {
-			response := helpers.ResponseJSON(helpers.ERROR, e.Error(), true, nil)
+			response := helpers.ResponseJSON(helpers.ERROR, err.Error(), true, nil)
 			return c.JSON(http.StatusInternalServerError, response)
 		}
 	}
